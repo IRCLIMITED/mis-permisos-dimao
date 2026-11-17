@@ -146,7 +146,28 @@ h2.sec{font-size:19px;margin:22px 0 10px}
 #toast{position:fixed;left:16px;right:16px;bottom:calc(18px + env(safe-area-inset-bottom));max-width:528px;margin:0 auto;background:#16201c;color:#fff;padding:14px 16px;border-radius:14px;font-size:16px;opacity:0;transform:translateY(12px);transition:.2s;pointer-events:none;z-index:30}
 #toast.ver{opacity:1;transform:none}
 #toast.mal{background:#8a1c12}
+.version{text-align:center;color:var(--muted);font-size:13px;margin:22px 0 6px}
+#errapp{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));max-width:536px;margin:0 auto;background:#fff3f1;border:2px solid #b42318;color:#5c130c;border-radius:14px;padding:12px 14px;z-index:40;font-size:14.5px;display:grid;gap:4px}
+#errapp b{font-size:16px}
+#errapp small{color:#7a4a44;word-break:break-all}
+#errapp button{justify-self:end;background:#b42318;color:#fff;border:0;border-radius:10px;padding:8px 14px;font-weight:700;font-size:15px}
 </style>
+<script>
+// Versión de la app (se muestra abajo, para saber si el teléfono ya tiene la última)
+var VERSION_APP='3 · 17-11-2026';
+// Si algo falla en el teléfono, se muestra en pantalla para poder sacarle una foto y avisar a la oficina
+function avisoFalla(msg){
+  try{
+    var b=document.getElementById('errapp');
+    if(!b){b=document.createElement('div');b.id='errapp';document.body.appendChild(b);}
+    var t=function(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});};
+    b.innerHTML='<b>Algo falló en la app</b><span>'+t(msg)+'</span><small>Versión '+t(VERSION_APP)+' · '+t(navigator.userAgent).slice(0,140)+'</small><button type="button">Cerrar</button>';
+    b.querySelector('button').onclick=function(){b.remove();};
+  }catch(e){}
+}
+window.addEventListener('error',function(e){avisoFalla((e.message||'Error')+(e.lineno?' (línea '+e.lineno+')':''));});
+window.addEventListener('unhandledrejection',function(e){var r=e.reason;avisoFalla(r&&r.message?r.message:String(r));});
+</script>
 </head>
 <body>
 <header class="top"><div class="logo">D</div><div class="tt"><b>Mis permisos</b><small id="quien">DIMAO · Municipalidad de Pozo Almonte</small></div><button class="salir" id="salir" hidden>Salir</button></header>
@@ -199,10 +220,14 @@ const IC={
 
 /* ---------- conexión con la planilla (Google Apps Script) ---------- */
 async function api(accion,datos){
-  // Texto plano: así Google responde sin pedir permisos extra al navegador
-  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({accion,...datos})});
-  if(!r.ok)throw new Error('Google respondió '+r.status);
-  return r.json();
+  // Texto plano: así Google responde sin pedir permisos extra al navegador.
+  // Si la conexión se cuelga, a los 60 segundos se avisa en vez de quedarse esperando.
+  const ctl=window.AbortController?new AbortController():null,reloj=ctl&&setTimeout(()=>ctl.abort(),60000);
+  try{
+    const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({accion,...datos}),signal:ctl?ctl.signal:undefined});
+    if(!r.ok)throw new Error('Google respondió '+r.status);
+    return await r.json();
+  }finally{if(reloj)clearTimeout(reloj);}
 }
 const CLAVE_LS='dimao_mis_permisos';
 let D=null,CRED=null,FER=new Set(),cargadoEn=0;
@@ -256,7 +281,14 @@ function pintar(){
 let instalar=null;
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();instalar=e;if(D&&vista==='inicio')pintar();});
 window.addEventListener('appinstalled',()=>{instalar=null;lsSet('dimao_instalada','1');toast('¡Listo! La app quedó instalada en tu teléfono.');if(D&&vista==='inicio')pintar();});
-if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(e=>console.warn('Sin service worker',e)));
+if('serviceWorker' in navigator){
+  // Cuando llega una versión nueva de la app, se recarga una vez (solo si no está llenando un formulario)
+  const habia=!!navigator.serviceWorker.controller;let recargo=false;
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{
+    if(habia&&!recargo&&(vista==='inicio'||!D)&&!(REC&&REC.grabando)){recargo=true;location.reload();}
+  });
+  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).catch(e=>console.warn('Sin service worker',e)));
+}
 function avisoInstalar(){
   if(INSTALADA()||lsGet('dimao_instalada')==='1'||lsGet('dimao_sin_aviso_inst')==='1')return '';
   if(instalar)return `<div class="aviso inst"><b>Instala la app en tu teléfono</b><p>Queda con su ícono, como cualquier otra app, y no tienes que volver a buscar el enlace.</p><button class="btn prim" data-instalar>${IC.bajar} Instalar app</button><button class="link" data-noinst>Ahora no</button></div>`;
@@ -314,7 +346,7 @@ function pantallaIngreso(msg){
         <button class="btn prim enviar" id="bIngreso">Entrar</button>
       </form>
       <p class="muted" style="margin-top:14px;font-size:15px">¿No tienes clave o la olvidaste? Pídela en la oficina de la DIMAO.</p>
-    </div></div>`;
+    </div><p class="version">Versión ${esc(VERSION_APP)}</p></div>`;
   const F=$('#fIngreso');
   F.rut.onblur=()=>{F.rut.value=fmtRut(F.rut.value);};
   F.clave.oninput=()=>{F.clave.value=F.clave.value.replace(/\D/g,'').slice(0,4);};
@@ -384,7 +416,8 @@ function pantallaInicio(){
     </div>
     <div class="cab"><h2 class="sec">Mis solicitudes</h2><button class="link" data-act>${IC.act.replace('<svg','<svg style="width:18px;height:18px;vertical-align:-3px"')} Actualizar</button></div>
     ${lista.length?lista.map(tarjeta).join(''):'<div class="card vacio">Aún no tienes solicitudes.</div>'}
-    ${orden.length>lista.length?`<button class="btn" data-todas>Ver todas (${orden.length})</button>`:''}`;
+    ${orden.length>lista.length?`<button class="btn" data-todas>Ver todas (${orden.length})</button>`:''}
+    <p class="version">Versión ${esc(VERSION_APP)}</p>`;
 }
 $('#app').addEventListener('click',async e=>{
   const t=e.target.closest('button');if(!t||!D)return;

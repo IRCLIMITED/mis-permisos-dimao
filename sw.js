@@ -1,6 +1,6 @@
 // Mis permisos DIMAO: guarda las pantallas para que la app abra rápido y se pueda instalar.
 // Los datos no pasan por aquí: se piden a Google cada vez (otra dirección).
-const CACHE = 'mis-permisos-v2';
+const CACHE = 'mis-permisos-v3';
 const ARCHIVOS = ['./', './index.html', './manifest.webmanifest', './icono-192.png', './icono-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
@@ -16,9 +16,10 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const u = new URL(e.request.url);
   if (e.request.method !== 'GET' || u.origin !== location.origin) return;
-  // Primero internet (así llega siempre la última versión); sin conexión, lo guardado
+  // Primero internet, preguntando siempre si hay una versión nueva (sin usar copias viejas del navegador);
+  // sin conexión, lo guardado
   e.respondWith(
-    fetch(e.request)
+    fetch(e.request, { cache: 'no-cache' })
       .then(r => { const copia = r.clone(); caches.open(CACHE).then(c => c.put(e.request, copia)); return r; })
       .catch(() => caches.match(e.request).then(r => r || caches.match('./index.html')))
   );
