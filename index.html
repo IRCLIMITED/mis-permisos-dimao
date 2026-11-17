@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f6e5a">
+<meta name="description" content="Vacaciones, permisos administrativos y cometidos de los funcionarios de la DIMAO, Municipalidad de Pozo Almonte">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Mis permisos">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icono-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Mis permisos DIMAO</title>
+<style>
+:root{
+  --bg:#f2f5f3;--panel:#fff;--ink:#16201c;--muted:#56635e;--line:#dbe3df;--line2:#edf1ef;
+  --brand:#0f6e5a;--brand2:#0b5a49;--brand-soft:#e2f1ec;
+  --vac:#0f6e5a;--adm:#2563a8;--com:#a23b72;
+  --rojo:#b42318;--rojo-soft:#fdecea;--ambar:#8a5200;--ambar-soft:#fdf2d9;--azul:#1f4f8f;--azul-soft:#e4eefb;
+  --r:16px;
+}
+*{box-sizing:border-box}
+/* Pantalla fija: sin desplazamiento hacia los lados ni zoom al arrastrar con el dedo */
+html,body{margin:0;overflow-x:hidden;max-width:100%}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{font:17px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overscroll-behavior-y:none;touch-action:pan-y;padding-bottom:env(safe-area-inset-bottom)}
+button,input,select,textarea{font:inherit;color:inherit;max-width:100%}
+h1,h2,h3,p{margin:0}
+.top{background:var(--brand);color:#fff;display:flex;align-items:center;gap:12px;padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top));position:sticky;top:0;z-index:5}
+.logo{width:40px;height:40px;border-radius:11px;background:#fff;color:var(--brand);display:grid;place-items:center;font-weight:800;font-size:21px;flex:none}
+.top .tt{flex:1;min-width:0}
+.top b{display:block;font-size:18px;line-height:1.2}
+.top small{display:block;font-size:13px;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .salir{background:rgba(255,255,255,.14);border:0;color:#fff;padding:9px 14px;border-radius:10px;font-weight:600;font-size:15px}
+main{max-width:560px;margin:0 auto;padding:16px 16px 40px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:14px}
+.muted{color:var(--muted)}
+.btn{appearance:none;-webkit-appearance:none;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:56px;padding:12px 18px;border-radius:14px;border:1px solid var(--line);background:#fff;font-weight:650;font-size:18px;cursor:pointer;text-decoration:none;color:var(--ink);text-align:center}
+.btn:active{transform:scale(.99)}
+.btn.prim{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.prim:disabled{opacity:.6}
+.btn.sec{background:var(--brand-soft);border-color:#bfe0d6;color:var(--brand2)}
+.btn svg{width:24px;height:24px;flex:none}
+.link{background:none;border:0;color:var(--brand);font-weight:650;padding:10px 0;font-size:16px;cursor:pointer}
+label.l{display:block;font-weight:650;margin:16px 0 6px;font-size:17px}
+input.in,textarea.in,select.in{display:block;width:100%;min-width:0;padding:14px;border:1.5px solid #c5d1cb;border-radius:12px;background:#fff;font-size:18px}
+input.in:focus,textarea.in:focus{outline:3px solid #9fd3c3;border-color:var(--brand)}
+/* Fechas y horas: en iPhone, sin esto se salen del ancho de la pantalla */
+input[type=date].in,input[type=time].in{-webkit-appearance:none;appearance:none;min-height:56px;line-height:1.2;text-align:left}
+input[type=date].in::-webkit-date-and-time-value,input[type=time].in::-webkit-date-and-time-value{text-align:left}
+input[type=number].in{-moz-appearance:textfield;appearance:textfield}
+input[type=number].in::-webkit-inner-spin-button,input[type=number].in::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+textarea.in{resize:vertical;min-height:90px;line-height:1.4}
+.fila{display:flex;gap:10px}.fila>*{flex:1 1 0;min-width:0}
+.err{background:var(--rojo-soft);color:#8a1c12;border:1px solid #f3c4bd;border-radius:12px;padding:12px 14px;margin:12px 0;font-weight:550}
+/* ingreso */
+.ingreso{padding-top:10px}
+.ingreso h1{font-size:25px;margin:6px 0 6px}
+.ingreso .chk{display:flex;gap:10px;align-items:center;margin:16px 0 4px;font-size:16px}
+.ingreso .chk input{width:22px;height:22px}
+/* inicio */
+.hola{font-size:23px;font-weight:750;margin:2px 0 2px}
+.sub{color:var(--muted);margin-bottom:14px}
+.aviso{border-radius:var(--r);padding:16px;margin-bottom:14px;border:1.5px solid}
+.aviso>b{display:block;font-size:17px;margin-bottom:4px}
+.aviso p{font-size:15.5px;margin-bottom:12px}
+.aviso p:last-child{margin-bottom:0}
+.aviso .btn{min-height:52px}
+.aviso.inst{background:#e8f4f0;border-color:#9fd3c3}
+.aviso.mic{background:#fbf3f7;border-color:#e2bfd0}
+.aviso.mic .btn{background:var(--com);border-color:var(--com);color:#fff}
+.aviso .link{padding:6px 0 0}
+.aviso ol{margin:0 0 4px;padding-left:22px;font-size:15.5px}
+.cont{display:grid;gap:10px;margin-bottom:20px}
+.cnt{background:var(--panel);border:1px solid var(--line);border-left:6px solid var(--c);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:14px}
+.cnt .n{font-size:40px;font-weight:800;line-height:1;color:var(--c);min-width:64px;text-align:center;font-variant-numeric:tabular-nums}
+.cnt .n.neg{color:var(--rojo)}
+.cnt .tx{flex:1;min-width:0}
+.cnt .tx b{display:block;font-size:17px}
+.cnt .tx span{display:block;font-size:14.5px;color:var(--muted)}
+h2.sec{font-size:19px;margin:22px 0 10px}
+.pedir{display:grid;gap:10px}
+.pedir .btn{justify-content:flex-start;text-align:left;border-left:6px solid var(--c);min-height:68px}
+.pedir .btn span{display:block}
+.pedir .btn small{display:block;font-weight:500;font-size:14px;color:var(--muted)}
+.pedir .btn svg{color:var(--c);width:30px;height:30px}
+.sol{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:10px;display:flex;gap:12px}
+.sol .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none;background:color-mix(in srgb,var(--c) 13%,white);color:var(--c)}
+.sol .ic svg{width:22px;height:22px}
+.sol .tx{flex:1;min-width:0}
+.sol .tx>b{display:block;font-size:17px;overflow-wrap:anywhere}
+.sol .tx>span:not(.chip){display:block;color:var(--muted);font-size:15px}
+.chip{display:inline-block;margin:6px 0 2px;padding:3px 11px;border-radius:999px;font-size:14px;font-weight:700}
+.c-gris{background:#eceeed;color:#4b5651}.c-ambar{background:var(--ambar-soft);color:var(--ambar)}.c-azul{background:var(--azul-soft);color:var(--azul)}.c-verde{background:#e3f3e5;color:#1f6a2b}.c-rojo{background:var(--rojo-soft);color:var(--rojo)}
+.sol small{display:block;color:var(--muted);font-size:14px}
+.resp{margin-top:8px;background:var(--bg);border-radius:10px;padding:9px 11px;font-size:15px}
+.sol .btn{min-height:46px;font-size:16px;margin-top:10px;padding:8px 12px}
+.sol .btn svg{width:20px;height:20px}
+.vacio{text-align:center;color:var(--muted);padding:18px}
+.cab{display:flex;align-items:center;justify-content:space-between;gap:10px}
+/* formularios */
+.volver{display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--brand);font-weight:650;font-size:17px;padding:6px 0 12px;cursor:pointer}
+.volver svg{width:22px;height:22px}
+.ftit{font-size:24px;font-weight:750;margin-bottom:4px}
+.stepper{display:flex;align-items:center;gap:10px}
+.stepper button{width:60px;height:60px;border-radius:14px;border:1.5px solid #c5d1cb;background:#fff;font-size:30px;font-weight:700;color:var(--brand);flex:none;cursor:pointer}
+.stepper input{flex:1;text-align:center;font-size:26px;font-weight:750}
+.opciones{display:grid;gap:8px}
+.op{display:flex;align-items:center;gap:12px;border:1.5px solid #c5d1cb;border-radius:14px;padding:14px;background:#fff;font-weight:600;cursor:pointer}
+.op input{width:24px;height:24px;accent-color:var(--brand);flex:none}
+.op:has(input:checked){border-color:var(--brand);background:var(--brand-soft)}
+.resumen{background:var(--brand-soft);border-radius:14px;padding:14px 16px;margin:18px 0 6px;font-size:16.5px;line-height:1.5}
+.resumen:empty{display:none}
+.resumen b{font-weight:750}
+.enviar{margin-top:22px}
+/* grabadora */
+.grab{border:1.5px dashed #d9b3c6;background:#fbf3f7;border-radius:16px;padding:14px;margin-top:6px}
+.grab .btn{border-color:#e2bfd0;color:var(--com);background:#fff}
+.grab .btn svg{color:var(--com)}
+.grab .btn.rec{background:var(--com);border-color:var(--com);color:#fff;animation:late 1.4s infinite}
+.grab .btn.rec svg{color:#fff}
+.grab .btn+.btn{margin-top:8px}
+@keyframes late{50%{box-shadow:0 0 0 8px rgba(162,59,114,.18)}}
+.grab audio{width:100%;margin:6px 0 8px}
+.grab .acc{display:flex;gap:8px}
+.grab .acc .btn{min-height:46px;font-size:16px;margin-top:0}
+.grab p{font-size:15px;color:var(--muted);margin-top:8px}
+.grab p.ok{color:#1f6a2b;font-weight:650}
+.o{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:15px;margin:14px 0 4px}
+.o::before,.o::after{content:"";flex:1;border-top:1px solid var(--line)}
+/* listo */
+.listo{text-align:center;padding:30px 10px}
+.listo .chk{width:84px;height:84px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;margin:0 auto 16px}
+.listo .chk svg{width:46px;height:46px}
+.listo h1{font-size:26px;margin-bottom:10px}
+.listo p{color:var(--muted);margin-bottom:24px}
+.cargando{text-align:center;color:var(--muted);padding:60px 10px}
+.spin{width:38px;height:38px;border:4px solid var(--line);border-top-color:var(--brand);border-radius:50%;margin:0 auto 14px;animation:gira .8s linear infinite}
+@keyframes gira{to{transform:rotate(360deg)}}
+.velo{position:fixed;inset:0;background:rgba(242,245,243,.85);display:grid;place-items:center;z-index:20;text-align:center;font-weight:650}
+#toast{position:fixed;left:16px;right:16px;bottom:calc(18px + env(safe-area-inset-bottom));max-width:528px;margin:0 auto;background:#16201c;color:#fff;padding:14px 16px;border-radius:14px;font-size:16px;opacity:0;transform:translateY(12px);transition:.2s;pointer-events:none;z-index:30}
+#toast.ver{opacity:1;transform:none}
+#toast.mal{background:#8a1c12}
+</style>
+</head>
+<body>
+<header class="top"><div class="logo">D</div><div class="tt"><b>Mis permisos</b><small id="quien">DIMAO · Municipalidad de Pozo Almonte</small></div><button class="salir" id="salir" hidden>Salir</button></header>
+<main id="app"><div class="cargando"><div class="spin"></div>Cargando…</div></main>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+/* Mis permisos DIMAO: app del celular de los funcionarios de la DIMAO (Municipalidad de Pozo Almonte).
+   Cada funcionario entra con su RUT y su clave de 4 números, ve cuántos días le quedan y pide
+   vacaciones, permisos administrativos y cometidos. Los datos viven en la planilla de Google de la
+   DIMAO: esta página solo los pide a la API (Google Apps Script) y la oficina tramita en Gestión DIMAO. */
+const API='https://script.google.com/macros/s/AKfycbxGMocRvaiQOU_wEqnXR89gTXNud1E44gkILAx7pTe6pKTjUGV5TOXQYyOhwMb1doCD/exec';
+
+const $=(s,el=document)=>el.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const parseD=s=>{const[y,m,d]=String(s).split('-').map(Number);return new Date(y,m-1,d);};
+const addDays=(s,n)=>{const d=parseD(s);d.setDate(d.getDate()+n);return iso(d);};
+const diffDays=(a,b)=>Math.round((parseD(b)-parseD(a))/864e5);
+const MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const DIAS=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+const plural=(n,a,b)=>Math.abs(n)===1?a:b;
+const fmtN=n=>String(Math.round(n*10)/10).replace('.',',');
+const HOY=()=>D&&D.hoy||iso(new Date());
+const fLarga=s=>{const d=parseD(s);return `${DIAS[d.getDay()]} ${d.getDate()} de ${MESES[d.getMonth()]}${String(s).slice(0,4)!==HOY().slice(0,4)?' de '+d.getFullYear():''}`;};
+const fCorta=s=>{const d=parseD(s);return `${d.getDate()} de ${MESES[d.getMonth()]}`;};
+const lsGet=k=>{try{return localStorage.getItem(k);}catch(e){return null;}};
+const lsSet=(k,v)=>{try{if(v==null)localStorage.removeItem(k);else localStorage.setItem(k,v);}catch(e){}};
+
+// Teléfono y modo de uso
+const IOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+const INSTALADA=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const PUEDE_GRABAR=!!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.MediaRecorder);
+
+const sv=p=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const IC={
+  vac:sv('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'),
+  adm:sv('<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>'),
+  com:sv('<path d="M3 16V7h11v9M14 10h4l3 3.5V16h-2M3 16h2M10 16h5"/><circle cx="7.5" cy="16.5" r="2"/><circle cx="17" cy="16.5" r="2"/>'),
+  mic:sv('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>'),
+  stop:sv('<rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/>'),
+  doc:sv('<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>'),
+  atras:sv('<path d="M15 5l-7 7 7 7"/>'),
+  ok:sv('<path d="M5 12.5l4.5 4.5L19 7.5"/>'),
+  act:sv('<path d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/>'),
+  bajar:sv('<path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19h14"/>'),
+  wa:sv('<path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/><path d="M9.5 9.5c.3 1.7 2.3 3.8 4.4 4.3l.9-1.1 1.6.7-.4 1.5c-3 .4-7.1-3.4-7-6.7l1.5-.4.6 1.6z"/>'),
+  compartir:sv('<path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-8"/>')
+};
+
+/* ---------- conexión con la planilla (Google Apps Script) ---------- */
+async function api(accion,datos){
+  // Texto plano: así Google responde sin pedir permisos extra al navegador
+  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({accion,...datos})});
+  if(!r.ok)throw new Error('Google respondió '+r.status);
+  return r.json();
+}
+const CLAVE_LS='dimao_mis_permisos';
+let D=null,CRED=null,FER=new Set(),cargadoEn=0;
+function leerCred(){try{const c=JSON.parse(lsGet(CLAVE_LS)||'null');return c&&c.rut&&c.clave?c:null;}catch(e){return null;}}
+function guardarCred(c){lsSet(CLAVE_LS,c?JSON.stringify(c):null);}
+function usar(r){D=r;FER=new Set(r.feriados||[]);cargadoEn=Date.now();$('#quien').textContent=r.persona.nombre||'DIMAO';$('#salir').hidden=false;}
+function sinConexion(e){toast('No se pudo conectar. Revisa tu internet e intenta de nuevo.',true);console.error(e);}
+
+/* ---------- días hábiles (sin fines de semana ni feriados) ---------- */
+function esHabil(s){const w=parseD(s).getDay();return w!==0&&w!==6&&!FER.has(s);}
+function sigHabil(s){let n=0;while(!esHabil(s)&&n++<30)s=addDays(s,1);return s;}
+function habiles(a,b){let n=0,d=a,k=0;while(d<=b&&k++<800){if(esHabil(d))n++;d=addDays(d,1);}return n;}
+function finPorDias(ini,n){let d=sigHabil(ini);for(let c=1;c<Math.ceil(n);){d=addDays(d,1);if(esHabil(d))c++;}return d;}
+const regreso=fin=>sigHabil(addDays(fin,1));
+const esMedio=v=>/medio/i.test(v.jornada||'');
+const diasDe=v=>esMedio(v)?0.5:+v.dias>0?+v.dias:habiles(v.inicio,v.fin);
+const diasCom=v=>v.inicio&&v.fin&&v.fin>=v.inicio?diffDays(v.inicio,v.fin)+1:0;
+const esVac=r=>r.col==='vacaciones'&&/^Vacaciones/.test(r.tipo||'');
+const esAdm=r=>r.col==='vacaciones'&&/administrativo/i.test(r.tipo||'');
+const PEND=['Enviada','Solicitada','En trámite'];
+
+// Saldos del año: aprobados + en trámite se descuentan (igual que en la oficina)
+function saldos(){
+  const a=HOY().slice(0,4),P=D.persona;
+  const R=D.registros.filter(r=>r.estado!=='Anulada'&&String(r.inicio).slice(0,4)===a);
+  const suma=(L,f)=>L.reduce((s,r)=>s+f(r),0);
+  const parte=(L,f)=>({ok:suma(L.filter(r=>r.estado==='Aprobada'),f),pend:suma(L.filter(r=>PEND.includes(r.estado)),f)});
+  const num=(v,def)=>v===''||v==null||isNaN(+v)?def:+v;
+  const arr=+P['arr'+a]||0,tv=num(P.diasVacaciones,15)+arr,ta=num(P.diasAdministrativos,6);
+  const v=parte(R.filter(esVac),diasDe),d=parte(R.filter(esAdm),diasDe);
+  const cOk=R.filter(r=>r.col==='cometidos'&&r.estado==='Aprobada');
+  return {anio:a,
+    vac:{total:tv,arr,...v,quedan:tv-v.ok-v.pend},
+    adm:{total:ta,...d,quedan:ta-d.ok-d.pend},
+    com:{n:cOk.length,dias:suma(cOk,diasCom),noches:suma(cOk,r=>Math.max(0,diasCom(r)-1)),pend:R.filter(r=>r.col==='cometidos'&&PEND.includes(r.estado)).length}};
+}
+
+/* ---------- navegación (el botón Atrás del teléfono vuelve al inicio) ---------- */
+let vista='inicio';
+function abrir(v){vista=v;try{history.pushState({v},'');}catch(e){}pintar();window.scrollTo(0,0);}
+window.addEventListener('popstate',e=>{vista=e.state&&e.state.v&&D?e.state.v:'inicio';if(vista!=='inicio'&&vista!=='listo'&&!FORM[vista])vista='inicio';pintar();});
+function pintar(){
+  if(REC&&REC.grabando&&vista!=='com')parar();
+  if(!D)return pantallaIngreso();
+  if(vista==='listo')return pantallaListo();
+  if(FORM[vista])return FORM[vista]();
+  pantallaInicio();
+}
+
+/* ---------- instalar la app ---------- */
+let instalar=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();instalar=e;if(D&&vista==='inicio')pintar();});
+window.addEventListener('appinstalled',()=>{instalar=null;lsSet('dimao_instalada','1');toast('¡Listo! La app quedó instalada en tu teléfono.');if(D&&vista==='inicio')pintar();});
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(e=>console.warn('Sin service worker',e)));
+function avisoInstalar(){
+  if(INSTALADA()||lsGet('dimao_instalada')==='1'||lsGet('dimao_sin_aviso_inst')==='1')return '';
+  if(instalar)return `<div class="aviso inst"><b>Instala la app en tu teléfono</b><p>Queda con su ícono, como cualquier otra app, y no tienes que volver a buscar el enlace.</p><button class="btn prim" data-instalar>${IC.bajar} Instalar app</button><button class="link" data-noinst>Ahora no</button></div>`;
+  if(IOS)return `<div class="aviso inst"><b>Déjala en tu pantalla de inicio</b><ol><li>Abre esta página en <b>Safari</b>.</li><li>Toca <b>Compartir</b> (el cuadrado con la flecha ${IC.compartir.replace('<svg','<svg style="width:18px;height:18px;vertical-align:-3px"')}).</li><li>Elige <b>“Agregar a inicio”</b> y luego “Agregar”.</li></ol><button class="link" data-noinst>Entendido</button></div>`;
+  return `<div class="aviso inst"><b>Déjala en tu pantalla de inicio</b><p>Abre esta página en <b>Chrome</b>, toca los tres puntos (⋮) de arriba a la derecha y elige <b>“Instalar app”</b> o “Agregar a la pantalla principal”.</p><button class="link" data-noinst>Entendido</button></div>`;
+}
+
+/* ---------- micrófono: se activa una sola vez ---------- */
+let MIC=lsGet('dimao_mic')==='ok'?'granted':'?';
+(async()=>{
+  try{
+    const s=await navigator.permissions.query({name:'microphone'});
+    MIC=s.state;s.onchange=()=>{MIC=s.state;if(D&&vista==='inicio')pintar();};
+    if(D&&vista==='inicio')pintar();
+  }catch(e){}
+})();
+function ayudaMicBloqueado(){
+  if(IOS)return 'En el iPhone ve a <b>Ajustes → Safari → Micrófono</b> y elige “Permitir”. Después vuelve aquí y toca otra vez “Activar micrófono”.';
+  return INSTALADA()?'Mantén presionado el ícono de la app → <b>Información de la app → Permisos → Micrófono → Permitir</b>. Después vuelve y toca otra vez “Activar micrófono”.'
+    :'Toca el ícono a la izquierda de la dirección (arriba) → <b>Permisos → Micrófono → Permitir</b>. Después toca otra vez “Activar micrófono”.';
+}
+function avisoMic(){
+  if(!PUEDE_GRABAR||MIC==='granted')return '';
+  if(MIC==='denied')return `<div class="aviso mic"><b>El micrófono está bloqueado</b><p>${ayudaMicBloqueado()}</p><button class="btn" data-mic>${IC.mic} Activar micrófono</button></div>`;
+  return `<div class="aviso mic"><b>Activa el micrófono una sola vez</b><p>Así podrás grabar con tu voz el motivo de tus cometidos. Toca el botón y luego <b>“Permitir”</b>${IOS?'':'. Si te da a elegir, no elijas “Solo esta vez”'}.</p><button class="btn" data-mic>${IC.mic} Activar micrófono</button></div>`;
+}
+async function activarMic(){
+  try{
+    const st=await navigator.mediaDevices.getUserMedia({audio:true});
+    st.getTracks().forEach(t=>t.stop());
+    MIC='granted';lsSet('dimao_mic','ok');toast('¡Micrófono activado! Ya puedes grabar el motivo de tus cometidos.');
+  }catch(e){
+    MIC=e&&e.name==='NotAllowedError'?'denied':'?';lsSet('dimao_mic',null);
+    toast(e&&e.name==='NotFoundError'?'No se encontró un micrófono en este teléfono.':'No se pudo activar el micrófono.',true);
+  }
+  if(vista==='inicio')pintar();
+}
+
+/* ---------- ingreso ---------- */
+const fmtRut=r=>{r=String(r||'').toUpperCase().replace(/[^0-9K]/g,'');if(r.length<2)return r;const c=r.slice(0,-1),dv=r.slice(-1);return c.replace(/\B(?=(\d{3})+(?!\d))/g,'.')+'-'+dv;};
+function pantallaIngreso(msg){
+  $('#quien').textContent='DIMAO · Municipalidad de Pozo Almonte';$('#salir').hidden=true;
+  const c=leerCred();
+  $('#app').innerHTML=`<div class="ingreso">
+    <div class="card">
+      <h1>Bienvenido(a)</h1>
+      <p class="muted">Aquí pides tus vacaciones, permisos administrativos y cometidos, y ves cuántos días te quedan.</p>
+      ${msg?`<div class="err">${esc(msg)}</div>`:''}
+      <form id="fIngreso" novalidate autocomplete="on">
+        <label class="l" for="rut">Tu RUT</label>
+        <input class="in" id="rut" name="rut" autocomplete="username" inputmode="text" placeholder="12.345.678-9" value="${esc(c?fmtRut(c.rut):'')}">
+        <label class="l" for="clave">Tu clave (4 números)</label>
+        <input class="in" id="clave" name="clave" type="password" inputmode="numeric" maxlength="4" autocomplete="current-password" placeholder="••••">
+        <label class="chk"><input type="checkbox" id="rec" checked> Recordarme en este teléfono</label>
+        <button class="btn prim enviar" id="bIngreso">Entrar</button>
+      </form>
+      <p class="muted" style="margin-top:14px;font-size:15px">¿No tienes clave o la olvidaste? Pídela en la oficina de la DIMAO.</p>
+    </div></div>`;
+  const F=$('#fIngreso');
+  F.rut.onblur=()=>{F.rut.value=fmtRut(F.rut.value);};
+  F.clave.oninput=()=>{F.clave.value=F.clave.value.replace(/\D/g,'').slice(0,4);};
+  F.onsubmit=async e=>{
+    e.preventDefault();
+    const rut=fmtRut(F.rut.value),clave=F.clave.value.trim();
+    if(rut.length<9||!/^\d{4}$/.test(clave))return pantallaIngreso('Escribe tu RUT y tu clave de 4 números.');
+    const b=$('#bIngreso');b.disabled=true;b.textContent='Entrando…';
+    try{
+      const r=await api('datos',{rut,clave});
+      if(r&&r.error){b.disabled=false;b.textContent='Entrar';const m=$('.err',F.parentNode)||document.createElement('div');m.className='err';m.textContent=r.error;F.before(m);F.clave.value='';return;}
+      CRED={rut,clave};guardarCred($('#rec').checked?CRED:null);usar(r);vista='inicio';pintar();
+    }catch(err){b.disabled=false;b.textContent='Entrar';sinConexion(err);}
+  };
+}
+$('#salir').onclick=()=>{
+  if(!confirm('¿Salir? Tendrás que escribir tu RUT y tu clave la próxima vez.'))return;
+  guardarCred(null);CRED=null;D=null;pantallaIngreso();
+};
+
+/* ---------- inicio ---------- */
+const ESTADO={
+  'Enviada':{t:'Enviada',c:'gris',d:'Esperando que la oficina la revise.'},
+  'Solicitada':{t:'Recibida',c:'ambar',d:'La oficina la recibió y la ingresará a la intranet.'},
+  'En trámite':{t:'En firma',c:'azul',d:'Está en la intranet, esperando las firmas.'},
+  'Aprobada':{t:'Aprobada',c:'verde',d:''},
+  'Anulada':{t:'Anulada',c:'rojo',d:''}
+};
+let verTodas=false;
+function tarjeta(r){
+  let tipo,cuando,ic,col;
+  if(r.col==='cometidos'){
+    tipo='Cometido a '+r.destino;ic=IC.com;col='var(--com)';
+    cuando=r.inicio===r.fin?`${fLarga(r.inicio)}${r.horaInicio?`, de ${r.horaInicio} a ${r.horaFin||'?'}`:''}`:`Del ${fCorta(r.inicio)} al ${fCorta(r.fin)} · ${diasCom(r)} días`;
+  }else{
+    const vac=esVac(r);tipo=vac?'Vacaciones':r.tipo||'Permiso';ic=vac?IC.vac:IC.adm;col=vac?'var(--vac)':'var(--adm)';
+    const n=diasDe(r);
+    cuando=esMedio(r)?`${/^Ma/.test(r.jornada)?'Mañana':'Tarde'} del ${fLarga(r.inicio)} (medio día)`:`${r.inicio===r.fin?fLarga(r.inicio):`Del ${fCorta(r.inicio)} al ${fCorta(r.fin)}`} · ${fmtN(n)} ${plural(n,'día hábil','días hábiles')}`;
+  }
+  const E=ESTADO[r.estado]||{t:r.estado,c:'gris',d:''};
+  return `<article class="sol" style="--c:${col}"><div class="ic">${ic}</div><div class="tx">
+    <b>${esc(tipo)}</b><span>${esc(cuando)}</span>
+    <span class="chip c-${E.c}">${esc(E.t)}</span>${E.d?`<small>${esc(E.d)}</small>`:''}
+    ${r.respuesta?`<p class="resp"><b>Mensaje de la oficina:</b> ${esc(r.respuesta)}</p>`:''}
+    ${(r.docs||[]).map(d=>`<button class="btn sec" data-doc="${esc(d.id)}">${IC.doc} Ver documento firmado</button>`).join('')}
+  </div></article>`;
+}
+function pantallaInicio(){
+  const x=saldos(),P=D.persona,a=x.anio;
+  const orden=[...D.registros].sort((p,q)=>(PEND.includes(q.estado)-PEND.includes(p.estado))||String(q.inicio).localeCompare(String(p.inicio)));
+  const lista=verTodas?orden:orden.slice(0,6);
+  const cnt=(c,n,tit,det)=>`<div class="cnt" style="--c:${c}"><div class="n${n<0?' neg':''}">${fmtN(n)}</div><div class="tx"><b>${tit}</b><span>${det}</span></div></div>`;
+  $('#app').innerHTML=`
+    <p class="hola">Hola, ${esc(String(P.nombre).trim().split(/\s+/)[0])}</p>
+    <p class="sub">${esc(P.cargo||'Funcionario(a) DIMAO')} · Tus días de ${a}</p>
+    ${avisoInstalar()}${avisoMic()}
+    <div class="cont">
+      ${cnt('var(--vac)',x.vac.quedan,`${plural(x.vac.quedan,'día','días')} de vacaciones disponibles`,`De ${fmtN(x.vac.total)}${x.vac.arr?` (incluye ${fmtN(x.vac.arr)} de ${a-1})`:''} · aprobados ${fmtN(x.vac.ok)}${x.vac.pend?` · en trámite ${fmtN(x.vac.pend)}`:''}`)}
+      ${cnt('var(--adm)',x.adm.quedan,`${plural(x.adm.quedan,'día administrativo disponible','días administrativos disponibles')}`,`De ${fmtN(x.adm.total)} · aprobados ${fmtN(x.adm.ok)}${x.adm.pend?` · en trámite ${fmtN(x.adm.pend)}`:''}`)}
+      ${cnt('var(--com)',x.com.n,`${plural(x.com.n,'cometido aprobado','cometidos aprobados')}`,`${x.com.dias} ${plural(x.com.dias,'día','días')} fuera${x.com.noches?` · ${x.com.noches} ${plural(x.com.noches,'noche','noches')}`:''}${x.com.pend?` · ${x.com.pend} en trámite`:''}`)}
+    </div>
+    <h2 class="sec">¿Qué quieres pedir?</h2>
+    <div class="pedir">
+      <button class="btn" style="--c:var(--vac)" data-ir="vac">${IC.vac}<span>Vacaciones<small>Feriado legal</small></span></button>
+      <button class="btn" style="--c:var(--adm)" data-ir="adm">${IC.adm}<span>Permiso administrativo<small>Día completo o medio día</small></span></button>
+      <button class="btn" style="--c:var(--com)" data-ir="com">${IC.com}<span>Cometido (viático)<small>Salida por trabajo fuera de la comuna</small></span></button>
+    </div>
+    <div class="cab"><h2 class="sec">Mis solicitudes</h2><button class="link" data-act>${IC.act.replace('<svg','<svg style="width:18px;height:18px;vertical-align:-3px"')} Actualizar</button></div>
+    ${lista.length?lista.map(tarjeta).join(''):'<div class="card vacio">Aún no tienes solicitudes.</div>'}
+    ${orden.length>lista.length?`<button class="btn" data-todas>Ver todas (${orden.length})</button>`:''}`;
+}
+$('#app').addEventListener('click',async e=>{
+  const t=e.target.closest('button');if(!t||!D)return;
+  if(t.dataset.ir)return abrir(t.dataset.ir);
+  if(t.dataset.todas!=null){verTodas=true;return pintar();}
+  if(t.dataset.act!=null)return actualizar(true);
+  if(t.dataset.doc)return verDocumento(t,t.dataset.doc);
+  if(t.dataset.volver!=null)return history.back();
+  if(t.dataset.mic!=null)return activarMic();
+  if(t.dataset.noinst!=null){lsSet('dimao_sin_aviso_inst','1');return pintar();}
+  if(t.dataset.instalar!=null&&instalar){
+    const ev=instalar;instalar=null;ev.prompt();
+    try{const r=await ev.userChoice;if(r.outcome==='accepted')lsSet('dimao_instalada','1');}catch(_){}
+    return pintar();
+  }
+});
+async function actualizar(aviso){
+  if(!CRED)return;
+  try{
+    const r=await api('datos',CRED);
+    if(r&&r.error){D=null;guardarCred(null);return pantallaIngreso(r.error);}
+    usar(r);if(vista==='inicio')pintar();if(aviso)toast('Actualizado');
+  }catch(e){if(aviso)sinConexion(e);}
+}
+async function verDocumento(btn,id){
+  // La ventana se abre antes de esperar a la planilla, para que el teléfono no la bloquee
+  const w=window.open('','_blank');
+  const txt=btn.innerHTML;btn.disabled=true;btn.textContent='Abriendo…';
+  try{
+    const r=await api('documento',{...CRED,archivoId:id});
+    if(r.error){if(w)w.close();toast(r.error,true);}
+    else if(w)w.location.href=r.url;
+    else{btn.outerHTML=`<a class="btn sec" href="${esc(r.url)}" target="_blank" rel="noopener">${IC.doc} Abrir el documento</a>`;return;}
+  }catch(e){if(w)w.close();sinConexion(e);}
+  btn.disabled=false;btn.innerHTML=txt;
+}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&D&&vista==='inicio'&&Date.now()-cargadoEn>60000)actualizar(false);});
+
+/* ---------- formularios ---------- */
+const volverHTML=`<button class="volver" data-volver>${IC.atras} Volver</button>`;
+const stepper=(id,val,min,max)=>`<div class="stepper"><button type="button" data-paso="-1" aria-label="Menos">−</button><input class="in" id="${id}" name="${id}" type="number" inputmode="numeric" min="${min}" max="${max}" value="${val}"><button type="button" data-paso="1" aria-label="Más">+</button></div>`;
+function conStepper(F,alCambiar){
+  F.addEventListener('click',e=>{
+    const b=e.target.closest('[data-paso]');if(!b)return;
+    const i=$('input',b.parentNode),v=(+i.value||0)+(+b.dataset.paso);
+    i.value=Math.min(+i.max,Math.max(+i.min,v));alCambiar();
+  });
+}
+let ultimoTipo='';
+async function enviarSolicitud(F,sol){
+  const err=$('.err',F);if(err)err.remove();
+  const b=$('.enviar',F);b.disabled=true;
+  const velo=document.createElement('div');velo.className='velo';velo.innerHTML=`<div><div class="spin"></div>Enviando tu solicitud…${sol.audio?'<br><small class="muted">El audio puede tardar un poco</small>':''}</div>`;
+  document.body.appendChild(velo);
+  try{
+    const r=await api('solicitar',{...CRED,sol});
+    velo.remove();
+    if(r&&r.error){b.disabled=false;const m=document.createElement('div');m.className='err';m.textContent=r.error;b.before(m);return;}
+    usar(r);vista='listo';ultimoTipo=sol.tipo;pintar();window.scrollTo(0,0);
+  }catch(e){velo.remove();b.disabled=false;sinConexion(e);}
+}
+const mostrarError=(F,msg)=>{const m=$('.err',F)||document.createElement('div');m.className='err';m.textContent=msg;$('.enviar',F).before(m);m.scrollIntoView({block:'center',behavior:'smooth'});};
+const minFecha=()=>addDays(HOY(),-60);
+
+// Vacaciones (feriado legal)
+function formVac(){
+  const x=saldos().vac;
+  $('#app').innerHTML=`${volverHTML}<p class="ftit">Pedir vacaciones</p>
+    <p class="muted">Te quedan <b>${fmtN(x.quedan)} ${plural(x.quedan,'día hábil','días hábiles')}</b> este año. Solo se cuentan los días hábiles: no los fines de semana ni los feriados.</p>
+    <form id="F" novalidate>
+      <label class="l" for="inicio">¿Desde qué día?</label>
+      <input class="in" type="date" id="inicio" name="inicio" min="${minFecha()}" value="">
+      <label class="l" for="dias">¿Cuántos días hábiles?</label>
+      ${stepper('dias',Math.max(1,Math.min(5,Math.floor(x.quedan))),1,40)}
+      <div class="resumen" id="res"></div>
+      <label class="l" for="com">Comentario <span class="muted">(si quieres)</span></label>
+      <textarea class="in" id="com" name="com" rows="2" maxlength="500"></textarea>
+      <button class="btn prim enviar">Enviar solicitud</button>
+    </form>`;
+  const F=$('#F');
+  const calc=()=>{
+    const ini=F.inicio.value,n=Math.round(+F.dias.value);
+    if(!ini||!(n>=1)){$('#res').innerHTML='';return null;}
+    const i2=sigHabil(ini),fin=finPorDias(i2,n),q=x.quedan-n;
+    $('#res').innerHTML=`${i2!==ini?`El ${fLarga(ini)} no es día hábil: tus vacaciones empiezan el <b>${fLarga(i2)}</b>.<br>`:''}Del <b>${fLarga(i2)}</b> al <b>${fLarga(fin)}</b>. Vuelves al trabajo el <b>${fLarga(regreso(fin))}</b>.<br>${q>=0?`Te quedarían ${fmtN(q)} ${plural(q,'día','días')}.`:`<span style="color:var(--rojo);font-weight:700">Ojo: pides ${fmtN(-q)} ${plural(-q,'día','días')} más de los que te quedan.</span>`}`;
+    return {inicio:i2,fin,dias:n};
+  };
+  F.oninput=calc;F.onchange=calc;conStepper(F,calc);
+  F.onsubmit=e=>{
+    e.preventDefault();const c=calc();
+    if(!F.inicio.value)return mostrarError(F,'Elige el día en que empiezan tus vacaciones.');
+    if(!c)return mostrarError(F,'Escribe cuántos días hábiles quieres.');
+    enviarSolicitud(F,{tipo:'Vacaciones (feriado legal)',inicio:c.inicio,fin:c.fin,dias:c.dias,comentario:F.com.value});
+  };
+}
+
+// Permiso administrativo
+function formAdm(){
+  const x=saldos().adm;
+  $('#app').innerHTML=`${volverHTML}<p class="ftit">Pedir permiso administrativo</p>
+    <p class="muted">Te quedan <b>${fmtN(x.quedan)} ${plural(x.quedan,'día','días')}</b> este año.</p>
+    <form id="F" novalidate>
+      <label class="l" for="inicio">¿Qué día?</label>
+      <input class="in" type="date" id="inicio" name="inicio" min="${minFecha()}" value="">
+      <label class="l">¿Por cuánto tiempo?</label>
+      <div class="opciones">
+        <label class="op"><input type="radio" name="jor" value="Día completo" checked> Día completo</label>
+        <label class="op"><input type="radio" name="jor" value="Mañana (medio día)"> Medio día en la mañana</label>
+        <label class="op"><input type="radio" name="jor" value="Tarde (medio día)"> Medio día en la tarde</label>
+      </div>
+      <div id="cuantos"><label class="l" for="dias">¿Cuántos días?</label>${stepper('dias',1,1,6)}</div>
+      <div class="resumen" id="res"></div>
+      <label class="l" for="com">Comentario <span class="muted">(si quieres)</span></label>
+      <textarea class="in" id="com" name="com" rows="2" maxlength="500"></textarea>
+      <button class="btn prim enviar">Enviar solicitud</button>
+    </form>`;
+  const F=$('#F');
+  const calc=()=>{
+    const ini=F.inicio.value,jor=F.jor.value,medio=jor!=='Día completo';
+    $('#cuantos').hidden=medio;
+    if(!ini){$('#res').innerHTML='';return null;}
+    const n=medio?0.5:Math.round(+F.dias.value)||1,i2=medio?ini:sigHabil(ini),fin=medio?ini:finPorDias(i2,n),q=x.quedan-n;
+    $('#res').innerHTML=`${medio&&!esHabil(ini)?'<span style="color:var(--rojo);font-weight:700">Ojo: ese día no es hábil.</span><br>':''}${!medio&&i2!==ini?`El ${fLarga(ini)} no es día hábil: el permiso empieza el <b>${fLarga(i2)}</b>.<br>`:''}${medio?`<b>${jor.startsWith('Mañana')?'Mañana':'Tarde'}</b> del <b>${fLarga(ini)}</b> (medio día).`:n===1?`El <b>${fLarga(i2)}</b>.`:`Del <b>${fLarga(i2)}</b> al <b>${fLarga(fin)}</b>.`}<br>${q>=0?`Te quedarían ${fmtN(q)} ${plural(q,'día','días')}.`:`<span style="color:var(--rojo);font-weight:700">Ojo: no te quedan días suficientes.</span>`}`;
+    return {inicio:i2,fin,dias:n,jornada:jor};
+  };
+  F.oninput=calc;F.onchange=calc;conStepper(F,calc);calc();
+  F.onsubmit=e=>{
+    e.preventDefault();const c=calc();
+    if(!c)return mostrarError(F,'Elige el día del permiso.');
+    enviarSolicitud(F,{tipo:'Permiso administrativo',...c,comentario:F.com.value});
+  };
+}
+
+// Cometido (viático): el motivo se graba con la voz, se manda por WhatsApp o se escribe
+let REC=null;
+const MOTIVO_WA='(Mandó el motivo en un audio de WhatsApp a la oficina)';
+function formCom(){
+  $('#app').innerHTML=`${volverHTML}<p class="ftit">Pedir cometido</p>
+    <p class="muted">Para salidas por trabajo. La oficina calcula el viático.</p>
+    <form id="F" novalidate>
+      <label class="l" for="destino">¿A dónde vas?</label>
+      <input class="in" id="destino" name="destino" list="destinos" maxlength="120" placeholder="Ej: Ciudad de Iquique" autocomplete="off">
+      <datalist id="destinos">${['Ciudad de Iquique','Alto Hospicio','Pica','Huara','Camiña','Colchane','Mamiña','La Tirana','Arica','Santiago'].map(d=>`<option value="${d}">`).join('')}</datalist>
+      <label class="l">¿Para qué vas? (motivo)</label>
+      <div class="grab" id="grab"></div>
+      <div class="o">o escríbelo</div>
+      <textarea class="in" id="motivo" name="motivo" rows="3" maxlength="2000" placeholder="Ej: Retiro de vales de agua potable y cotización de insumos"></textarea>
+      <label class="l" for="inicio">Salida</label>
+      <div class="fila"><input class="in" type="date" id="inicio" name="inicio" min="${minFecha()}"><input class="in" type="time" id="hi" name="hi" value="09:00" aria-label="Hora de salida"></div>
+      <label class="l" for="fin">Regreso</label>
+      <div class="fila"><input class="in" type="date" id="fin" name="fin" min="${minFecha()}"><input class="in" type="time" id="hf" name="hf" value="17:00" aria-label="Hora de regreso"></div>
+      <div class="resumen" id="res"></div>
+      <button class="btn prim enviar">Enviar solicitud</button>
+    </form>`;
+  const F=$('#F');
+  const calc=()=>{
+    const i=F.inicio.value,f=F.fin.value;
+    if(!i||!f){$('#res').innerHTML='';return;}
+    if(f<i){$('#res').innerHTML='<span style="color:var(--rojo);font-weight:700">El regreso no puede ser antes de la salida.</span>';return;}
+    const d=diffDays(i,f)+1;
+    $('#res').innerHTML=d===1?`<b>1 día</b>, el ${fLarga(i)}, sin pasar la noche fuera.`:`<b>${d} días</b>, del ${fLarga(i)} al ${fLarga(f)}: ${d-1} ${plural(d-1,'noche','noches')} fuera.`;
+  };
+  F.inicio.onchange=()=>{if(F.inicio.value&&(!F.fin.value||F.fin.value<F.inicio.value))F.fin.value=F.inicio.value;calc();};
+  F.oninput=calc;F.fin.onchange=calc;
+  REC={blob:null,tipo:'',url:''};pintarGrab();
+  F.onsubmit=async e=>{
+    e.preventDefault();
+    if(REC.grabando)return mostrarError(F,'Primero termina la grabación (botón rojo).');
+    const destino=F.destino.value.trim(),i=F.inicio.value,f=F.fin.value;
+    let motivo=F.motivo.value.trim();
+    if(!motivo&&REC.wa)motivo=MOTIVO_WA;
+    if(!destino)return mostrarError(F,'Escribe a dónde vas.');
+    if(!motivo&&!REC.blob)return mostrarError(F,'Graba o escribe el motivo del cometido.');
+    if(!i||!f)return mostrarError(F,'Elige el día de salida y el de regreso.');
+    if(f<i)return mostrarError(F,'El regreso no puede ser antes de la salida.');
+    if(f===i&&F.hf.value&&F.hi.value&&F.hf.value<F.hi.value)return mostrarError(F,'La hora de regreso no puede ser antes de la de salida.');
+    let audio=null;
+    if(REC.blob){
+      if(REC.blob.size>9e6)return mostrarError(F,'El audio es muy largo. Graba uno más corto (máximo 5 minutos).');
+      audio={tipo:REC.tipo||REC.blob.type||'audio/webm',datos:await aBase64(REC.blob)};
+    }
+    enviarSolicitud(F,{tipo:'Cometido',destino,motivo,inicio:i,fin:f,horaInicio:F.hi.value,horaFin:F.hf.value,audio});
+  };
+}
+const aBase64=b=>new Promise((ok,mal)=>{const fr=new FileReader();fr.onload=()=>ok(String(fr.result).split(',')[1]||'');fr.onerror=()=>mal(fr.error);fr.readAsDataURL(b);});
+const mmss=s=>Math.floor(s/60)+':'+pad(Math.floor(s%60));
+function pintarGrab(msg){
+  const g=$('#grab');if(!g)return;
+  const wa=D&&D.whatsapp?`<button type="button" class="btn" data-g="wa">${IC.wa} Mandar el audio por WhatsApp</button>`:'';
+  // En iPhone el selector de archivos no graba audio: ahí se ofrece WhatsApp
+  const archivo=IOS?'':`<label class="btn">${IC.mic} Usar la grabadora del teléfono<input type="file" accept="audio/*" capture hidden data-g="archivo"></label>`;
+  if(REC.grabando){
+    g.innerHTML=`<button type="button" class="btn rec" data-g="parar">${IC.stop} Terminar <span id="seg">${mmss(REC.seg||0)}</span></button><p>Grabando… habla cerca del teléfono. Cuando termines, toca el botón.</p>`;
+  }else if(REC.blob){
+    g.innerHTML=`<audio controls src="${REC.url}"></audio><div class="acc"><button type="button" class="btn" data-g="otra">${IC.mic} Repetir</button><button type="button" class="btn" data-g="borrar">Borrar</button></div><p>Escúchalo para revisar que se entienda.</p>`;
+  }else if(REC.wa){
+    g.innerHTML=`<p class="ok">✓ Mandas el motivo por WhatsApp.</p><p>Graba el audio en el chat de la oficina que se abrió (mantén apretado el micrófono de WhatsApp). Después vuelve aquí y envía la solicitud.</p><button type="button" class="btn" data-g="wa">${IC.wa} Abrir WhatsApp otra vez</button><button type="button" class="btn" data-g="borrar">Mejor lo grabo o lo escribo aquí</button>`;
+  }else if(!PUEDE_GRABAR){
+    g.innerHTML=`${wa}${archivo}<p>${wa||archivo?'Este teléfono no deja grabar dentro de la app.':'Este teléfono no deja grabar dentro de la app: escribe el motivo.'}</p>`;
+  }else{
+    g.innerHTML=`<button type="button" class="btn" data-g="grabar">${IC.mic} Grabar el motivo con tu voz</button>${msg?`<p style="color:var(--ink)">${msg}</p>${archivo}${wa}`:`${wa}<p>Toca “Grabar”, cuenta para qué vas y toca de nuevo para terminar.</p>`}`;
+  }
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-g]');if(!b||b.tagName==='INPUT')return;
+  const a=b.dataset.g;
+  if(a==='grabar'||a==='otra')grabar();
+  else if(a==='parar')parar();
+  else if(a==='borrar'){if(REC.url)URL.revokeObjectURL(REC.url);REC={blob:null,tipo:'',url:''};pintarGrab();}
+  else if(a==='wa')mandarPorWhatsApp();
+});
+document.addEventListener('change',e=>{
+  if(!e.target.matches('[data-g="archivo"]'))return;
+  const f=e.target.files[0];if(!f)return;
+  if(REC.url)URL.revokeObjectURL(REC.url);
+  REC={blob:f,tipo:f.type||'audio/mp4',url:URL.createObjectURL(f)};pintarGrab();
+});
+function mandarPorWhatsApp(){
+  const F=$('#F'),P=D.persona,destino=F&&F.destino.value.trim(),ini=F&&F.inicio.value;
+  const txt=`Hola, soy ${P.nombre}${P.rut?' (RUT '+P.rut+')':''}. Te mando en un audio el motivo de mi cometido${destino?' a '+destino:''}${ini?' del '+fLarga(ini):''}:`;
+  window.open('https://wa.me/'+D.whatsapp+'?text='+encodeURIComponent(txt),'_blank');
+  if(REC.url)URL.revokeObjectURL(REC.url);
+  REC={blob:null,tipo:'',url:'',wa:true};pintarGrab();
+}
+async function grabar(){
+  if(REC.url)URL.revokeObjectURL(REC.url);
+  REC={blob:null,tipo:'',url:''};
+  let st;
+  try{st=await navigator.mediaDevices.getUserMedia({audio:true});}
+  catch(e){
+    if(e&&e.name==='NotAllowedError'){MIC='denied';lsSet('dimao_mic',null);return pintarGrab('El micrófono está bloqueado. '+ayudaMicBloqueado());}
+    return pintarGrab('No se pudo usar el micrófono.');
+  }
+  MIC='granted';lsSet('dimao_mic','ok');
+  // iPhone graba en mp4; Android en webm
+  const tipos=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus'];
+  const mime=tipos.find(t=>MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(t))||'';
+  let rec;
+  try{rec=new MediaRecorder(st,mime?{mimeType:mime,audioBitsPerSecond:32000}:undefined);}
+  catch(e){st.getTracks().forEach(t=>t.stop());return pintarGrab('No se pudo grabar en este teléfono.');}
+  const partes=[];
+  rec.ondataavailable=e=>{if(e.data&&e.data.size)partes.push(e.data);};
+  rec.onstop=()=>{
+    st.getTracks().forEach(t=>t.stop());clearInterval(REC.reloj);
+    const tipo=(rec.mimeType||mime||'audio/webm').split(';')[0];
+    const blob=new Blob(partes,{type:tipo});
+    REC={blob:blob.size?blob:null,tipo,url:blob.size?URL.createObjectURL(blob):''};
+    pintarGrab(blob.size?'':'No se grabó nada. Intenta de nuevo.');
+  };
+  REC={grabando:true,rec,seg:0,inicio:Date.now()};
+  REC.reloj=setInterval(()=>{
+    REC.seg=(Date.now()-REC.inicio)/1000;const s=$('#seg');if(s)s.textContent=mmss(REC.seg);
+    if(REC.seg>=300)parar();
+  },500);
+  try{rec.start(1000);}
+  catch(e){
+    clearInterval(REC.reloj);st.getTracks().forEach(t=>t.stop());REC={blob:null,tipo:'',url:''};
+    return pintarGrab('No se pudo empezar a grabar. Intenta de nuevo.');
+  }
+  pintarGrab();
+}
+function parar(){if(REC&&REC.rec&&REC.rec.state!=='inactive')REC.rec.stop();}
+
+const FORM={vac:formVac,adm:formAdm,com:formCom};
+
+/* ---------- solicitud enviada ---------- */
+function pantallaListo(){
+  $('#app').innerHTML=`<div class="listo"><div class="chk">${IC.ok}</div><h1>¡Solicitud enviada!</h1>
+    <p>La oficina de la DIMAO la revisará y la ingresará a la intranet. Cuando esté firmada y aprobada, la verás aquí con el documento.</p>
+    <button class="btn prim" data-inicio>Volver al inicio</button></div>`;
+  $('[data-inicio]').onclick=()=>{vista='inicio';try{history.back();}catch(e){}pintar();};
+}
+
+/* ---------- avisos ---------- */
+function toast(msg,mal){
+  const t=$('#toast');t.textContent=msg;t.className='ver'+(mal?' mal':'');
+  clearTimeout(t._h);t._h=setTimeout(()=>{t.className='';},mal?5000:2800);
+}
+
+/* ---------- arranque ---------- */
+async function arrancar(){
+  CRED=leerCred();
+  if(!CRED)return pantallaIngreso();
+  $('#app').innerHTML='<div class="cargando"><div class="spin"></div>Cargando…</div>';
+  try{
+    const r=await api('datos',CRED);
+    if(r&&r.error){guardarCred(null);CRED=null;return pantallaIngreso(r.error);}
+    usar(r);pintar();
+  }catch(e){
+    $('#app').innerHTML=`<div class="card vacio">No se pudo conectar. Revisa tu internet.<br><br><button class="btn prim" id="reint">Intentar de nuevo</button></div>`;
+    $('#reint').onclick=arrancar;
+  }
+}
+arrancar();
+</script>
+</body>
+</html>
