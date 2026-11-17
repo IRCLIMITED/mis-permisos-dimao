@@ -22,10 +22,13 @@
   --r:16px;
 }
 *{box-sizing:border-box}
-/* Pantalla fija: sin desplazamiento hacia los lados ni zoom al arrastrar con el dedo */
-html,body{margin:0;overflow-x:hidden;max-width:100%}
+/* Pantalla fija al ancho del teléfono: nada se sale por los lados. El "overflow" va solo en body
+   (no en html ni con touch-action): así el desplazamiento con el dedo sigue siendo el normal del teléfono.
+   En algunos Chrome de Android, ponerlo en html y body a la vez dejaba la página sin poder deslizarse. */
+html,body{margin:0}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
-body{font:17px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overscroll-behavior-y:none;touch-action:pan-y;padding-bottom:env(safe-area-inset-bottom)}
+body{font:17px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom)}
+main,.top{max-width:100%}
 button,input,select,textarea{font:inherit;color:inherit;max-width:100%}
 h1,h2,h3,p{margin:0}
 .top{background:var(--brand);color:#fff;display:flex;align-items:center;gap:12px;padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top));position:sticky;top:0;z-index:5}

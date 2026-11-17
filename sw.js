@@ -1,6 +1,6 @@
 // Mis permisos DIMAO: guarda las pantallas para que la app abra rápido y se pueda instalar.
 // Los datos no pasan por aquí: se piden a Google cada vez (otra dirección).
-const CACHE = 'mis-permisos-v1';
+const CACHE = 'mis-permisos-v2';
 const ARCHIVOS = ['./', './index.html', './manifest.webmanifest', './icono-192.png', './icono-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
